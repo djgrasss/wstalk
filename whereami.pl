@@ -8,7 +8,7 @@ use Config::Simple;
 use XML::Simple qw(:strict);
 
 # Read config
-Config::Simple->import_from('wifiloc.cfg', \%conf)
+Config::Simple->import_from('wstalk.cfg', \%conf)
   or die ("Unable to read config ($!)");
 
 die ("NumAPs must be >0") unless ($conf{'NumAPs'} > 0);

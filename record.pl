@@ -9,7 +9,7 @@ use Config::Simple;
 use XML::Simple qw(:strict);
 
 # Read device from config
-Config::Simple->import_from('wifiloc.cfg', \%conf)
+Config::Simple->import_from('wstalk.cfg', \%conf)
    or die ("Unable to read config ($!)");
 
 $conf{'Device'} = "wlan0" unless (($conf{'Device'} // "") =~ /^[a-z0-9_\.-]+$/);
