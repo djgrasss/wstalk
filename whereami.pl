@@ -11,8 +11,7 @@ use XML::Simple qw(:strict);
 Config::Simple->import_from('wstalk.cfg', \%conf)
   or die ("Unable to read config ($!)");
 
-die ("NumAPs must be >0") unless ($conf{'NumAPs'} > 0);
-
+$conf{'NumAPs'} = 1 unless ($conf{'NumAPs'} > 0);
 $conf{'Device'} = "wlan0" unless (($conf{'Device'} // "") =~ /^[a-z0-9_\.-]+$/);
 $dev = $conf{'Device'};
 
