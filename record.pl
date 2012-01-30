@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# WStalk
+# Data collector
 # Oona Räisänen 2012
 use warnings;
 use 5.010;
@@ -19,7 +21,7 @@ print "Select file:\n";
 $n = 0;
 print "0) NEW\n";
 for (<*.xml>) {
-  if (`grep wifiscan $_`) {
+  if (`grep wifiscan '$_'`) {
     $n++;
     push(@filelist,$_);
     print "$n) $_\n";

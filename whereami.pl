@@ -1,39 +1,60 @@
 #!/usr/bin/perl
+# WStalk
+# Position estimator
 # Oona Räisänen 2012
 use warnings;
+use utf8;
 use open ':encoding(utf8)';
 binmode(STDOUT, ":utf8");
 
-use Config::Simple;
-use XML::Simple qw(:strict);
+use DBI;
+my $dbh = DBI->connect("dbi:SQLite:dbname=ratio.sqlite","","",
+  {
+    RaiseError     => 1,
+    sqlite_unicode => 1,
+    AutoCommit     => 1
+  }
+);
 
 # Read config
-Config::Simple->import_from('wstalk.cfg', \%conf)
-  or die ("Unable to read config ($!)");
+open(SIS,"wstalk.cfg") or die("Unable to read config ($!)");
+for (<SIS>) {
+  chomp;
+  $conf{$1} = $2 if (/^(\S+)\s+(.+)/);
+}
+close(SIS);
 
-$conf{'NumAPs'} = 1 unless ($conf{'NumAPs'} > 0);
-$conf{'Device'} = "wlan0" unless (($conf{'Device'} // "") =~ /^[a-z0-9_\.-]+$/);
+$conf{'Device'} = "wlan0" unless (($conf{'Device'} // "") =~ /^[a-z0-9_\.-]+$/i);
 $dev = $conf{'Device'};
 
-# Read Wi-Fi map
-$scan = XMLin($conf{'ScanFile'},
-  KeyAttr    => { "loc" => "id", "ap" => "mac" },
-  ForceArray => [ "loc", "ap" ]) or die ("Unable to read map ($!)");
+print "reading databases\n";
 
-# Find strongest APs in every map location
-for $loc (keys %{$scan->{loc}}) {
-  @s = (sort { $scan->{loc}->{$loc}->{ap}->{$b}->{q} <=>
-    $scan->{loc}->{$loc}->{ap}->{$a}->{q} }
-    keys %{$scan->{loc}->{$loc}->{ap}})[0..$conf{'NumAPs'}-1];
-  @s = grep (defined, @s);
-  $strongest{$loc}{$_} = 1 for (@s);
+# Read names of locations
+$sth = $dbh->prepare("SELECT * FROM LocNames");
+$sth->execute();
+$pnimet[$row[0]] = $row[1] while ( @row = $sth->fetchrow_array );
+
+# Read radio map
+$sth = $dbh->prepare("SELECT * FROM Ratios");
+$sth->execute();
+
+while ( @row = $sth->fetchrow_array ) {
+  ($a,$b,$paikka) = ($row[0],$row[1],$row[2]);
+  ($mean{$paikka}{$a}{$b}, $sdev{$paikka}{$a}{$b}, $n) = ($row[3],$row[4],$row[5]);
 }
+
+print "scanning\n";
 
 # Scan for nearby APs
 for (`gksudo iwlist $dev scan`) {
+#for (`cat scan`) {
   $adr       = $1 if (/^\s+Cell \d+ - Address: (\S+)/);
   $qua{$adr} = $1 if (/^\s+Quality=(\d+)/ && defined $adr);
 }
+
+print "got ".scalar(keys %qua)."\n";
+
+die if (scalar keys %qua == 0);
 
 # Generate UTC timestamp
 @ctime     = gmtime(time);
@@ -42,16 +63,40 @@ $timestamp = sprintf("%04d-%02d-%02dT%02d:%02d:%02dZ",
 
 # Compare the scan results with all mapped locations
 $n = 0;
-for $adr (sort {$qua{$b} <=> $qua{$a}} keys %qua) {
-  $match{$_} += exists($strongest{$_}{$adr}) for (keys %strongest);
-  last if (++$n >= $conf{'NumAPs'});
+@smacs = sort keys %{$mean{0}};
+
+$mostprob = 0;
+for $paikka (sort { $a <=> $b } keys %mean) {
+  $prob = 1;
+  $incommon = 0;
+  #print "\n";
+  for $a (0..$#smacs-1) {
+    for $b ($a+1..$#smacs) {
+      if (exists ($qua{$smacs[$a]}) && exists ($qua{$smacs[$b]})) {
+        $incommon ++;
+        #print "$qua{$smacs[$a]} v. $qua{$smacs[$b]}: ";
+        ($m, $s) = ($mean{$paikka}{$smacs[$a]}{$smacs[$b]}, $sdev{$paikka}{$smacs[$a]}{$smacs[$b]});
+        #print "mean $m sdev $s\n";
+        $nlr = log( $qua{$smacs[$a]} / $qua{$smacs[$b]} ) - log(1/71);
+        #print "  nlr = $nlr\n";
+        $p   = .01 + 1/sqrt(2*3.141592653589793*($s**2)) * exp( -(($nlr-$m)**2)/ (2*($s**2)));
+        #$p   = .01 + exp( -(($nlr-$m)**2)/ (2*($s**2)));
+        #print "  p = $p\n";
+        $prob *= $p;
+        #print "  prob = $prob\n";
+      } else {
+        #print " $smacs[$a] x $smacs[$b] not in scan\n";
+      }
+    }
+  }
+  $prob = 0 if ($incommon < 3);
+  printf( "%03d: %f\n",$paikka,$prob);
+  $pr[$paikka] = $prob;
+  $mostprob = $paikka if ($prob > $pr[$mostprob]);
 }
 
-# Print most similar location
-if (scalar keys %qua == 0) {
-  print STDERR "No APs could be heard\n";
-} elsif (scalar keys %match == 0) {
-  print "$timestamp Outside map range\n";
+if ($pr[$mostprob] > 0) {
+  print "\n$pnimet[$mostprob]\n";
 } else {
-  print ("$timestamp ".$scan->{loc}->{(sort {$match{$b} <=> $match{$a}} keys %match)[0]}->{desc}."\n");
+  print "\n[outside map range]\n";
 }
