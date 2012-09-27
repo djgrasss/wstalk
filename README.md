@@ -25,27 +25,27 @@ Käyttö
 ------
 
 HLF-metodi vaatii keräyskuuntelun. Se tehdään viemällä
-laite kuunneltavaan huoneeseen ja ajamalla justrecord.pl.
+laite kuunneltavaan huoneeseen ja ajamalla `justrecord.pl`.
 Skripti kysyy huoneelle asetettavan nimen ja kuuntelee
-WLAN-piiriä while-silmukassa, kunnes käyttäjä painaa enteriä.
+WLAN-piiriä `while`-silmukassa, kunnes käyttäjä painaa enteriä.
 Yleensä yli 20 otosta huonetta kohden on riittävä.
 
 Kuuntelun jälkeen raakadatasta on tehtävä radiokartta
-ratio.pl-skriptillä. Standardisyötteenä annetaan
-raw_recorded.csv tai siitä grepillä erotetut, halutut
-rivit. ratio.pl laskee tukiasemien voimakkuuksien suhteet,
+`ratio.pl`-skriptillä. Standardisyötteenä annetaan
+`raw_recorded.csv` tai siitä grepillä erotetut, halutut
+rivit. `ratio.pl` laskee tukiasemien voimakkuuksien suhteet,
 määrittää oletetun normaalijakauman parametrit ja
-tallentaa ne tietokannaksi ratio.sqlite-tiedostoon.
+tallentaa ne tietokannaksi `ratio.sqlite`-tiedostoon.
 
-Itse paikannus tapahtuu whereami.pl-skriptillä. Skripti
+Itse paikannus tapahtuu `whereami.pl`-skriptillä. Skripti
 tulostaa päätteeseen todennäköisyyksiä eri sijainneista ja
 kaikken todennäköisimmän sijainnin erikseen. Se myös piirtää
-sijainnin vilkkuvana ympyränä kartalle (where.gif)
+sijainnin vilkkuvana ympyränä kartalle (`where.gif`)
 ImageMagickin avulla.
 
-justrecord- ja whereami-skriptien on saatava käyttää
-iwlist-ohjelmaa root-oikeuksilla. Tämän helpottamiseksi
-on sudoersiin lisättävä (visudo-komennolla) esimerkiksi
+`justrecord`- ja `whereami`-skriptien on saatava käyttää
+`iwlist`-ohjelmaa root-oikeuksilla. Tämän helpottamiseksi
+on sudoersiin lisättävä (`visudo`-komennolla) esimerkiksi
 seuraava rivi:
 
 `%admin ALL=NOPASSWD: /sbin/iwlist`
@@ -77,5 +77,3 @@ sinne vaikka olin aivan eri puolella taloa ja eri
 kerroksessa. En ole aivan varma, mistä tämä johtuu. Myös
 edellä mainitsemani radiokartan "rapistuminen" koitui
 ongelmaksi.
-
-
