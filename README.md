@@ -2,8 +2,8 @@
 =========
 
 Location Awareness -projektityö, kevät 2012
-Oona Räisänen (013337731)
-oona.raisanen@helsinki.fi
+Oona Räisänen
+oona.raisanen at helsinki.fi
 
 YLEISTÄ
 -------
