@@ -1,16 +1,16 @@
 "W-Stalk"
 =========
 
-Location Awareness -projektityö, kevät 2012
-Oona Räisänen
-oona.raisanen at helsinki.fi
+* Location Awareness -projektityö, kevät 2012
+* Oona Räisänen
+* oona.raisanen at helsinki.fi
 
-YLEISTÄ
+Yleistä
 -------
 
 Projektini on WLAN-paikannusohjelma Kumpulan kampukselle.
-Se keskittyy Exactumiin ja muihin tiloihin, joita tietojen-
-käsittelytieteen opiskelijat saattavat käyttää. Alusta on
+Se keskittyy Exactumiin ja muihin tiloihin, joita tietojenkäsittelytieteen
+opiskelijat saattavat käyttää. Alusta on
 Linux, ohjelmointikieli Perl ja tietoa tallennetaan myös
 SQLite-tiedostoon.
 
@@ -21,7 +21,7 @@ Avaintermejä projektin käyttämän metodin takana:
 hyperbolic location fingerprinting (HLF), Bayesian inference
 
 
-KÄYTTÖ
+Käyttö
 ------
 
 HLF-metodi vaatii keräyskuuntelun. Se tehdään viemällä
@@ -48,10 +48,10 @@ iwlist-ohjelmaa root-oikeuksilla. Tämän helpottamiseksi
 on sudoersiin lisättävä (visudo-komennolla) esimerkiksi
 seuraava rivi:
 
-%admin ALL=NOPASSWD: /sbin/iwlist
+`%admin ALL=NOPASSWD: /sbin/iwlist`
 
 
-TARKKUUS
+Tarkkuus
 --------
 
 Ohjelma pystyy parhaimmillaan alle huoneen tarkkuuteen.
@@ -62,7 +62,7 @@ paikannukset alkavat osua enimmäkseen viereisiin
 huoneisiin.
 
 
-ONGELMIA
+Ongelmia
 --------
 
 Projektin hankalin osuus oli käytännössä päästä kaikkiin
