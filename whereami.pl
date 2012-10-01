@@ -174,12 +174,14 @@ while (1) {
   # Report our location
 
   if ($pr[$mostprob] > 0) {
+    ($sc,$mn,$hr,$dy,$qqk,$yr,$wday,$ydat,$isdst) = localtime();
     print "\nwe're in: --> $pnimet[$mostprob] <--\n";
     system("convert -size 867x650 ".$pmap[$mostprob].".png -draw \"image over ".
            ($pmapx[$mostprob]-39).",".($pmapy[$mostprob]-39).
-           " 77,77 'dot.png'\" where-doton.png");
+           " 77,77 'dot.png'\" -fill black -undercolor red -draw \"text ".($pmapx[$mostprob]+39).",".($pmapy[$mostprob]-29)." \'windytan\n$pnimet[$mostprob]\n".sprintf("%04d-%02d-%02d %02d:%02d",$yr+1900,$qqk+1,$dy,$hr,$mn)."\'\" where-doton.png");
     system("convert -delay 60 -size 867x650 $pmap[$mostprob].png where-doton.png where-t.gif");
     system("mv where-t.gif where.gif");
+    print "done\n";
   } else {
     print "\n[we're outside map range]\n";
   }

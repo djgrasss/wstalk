@@ -5,6 +5,8 @@
 * Oona Räisänen
 * oona.raisanen at helsinki.fi
 
+![Screenshot](http://www.cs.helsinki.fi/u/okraisan/located-t.jpg)
+
 Yleistä
 -------
 
