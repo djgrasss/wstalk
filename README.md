@@ -79,3 +79,6 @@ sinne vaikka olin aivan eri puolella taloa ja eri
 kerroksessa. En ole aivan varma, mistä tämä johtuu. Myös
 edellä mainitsemani radiokartan "rapistuminen" koitui
 ongelmaksi.
+
+Paikannusta voisi vielä tarkentaa partikkelisuodatuksella tai
+vastaavilla keinoilla.
